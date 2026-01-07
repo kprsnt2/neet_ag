@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEET Study Assistant - AI-Powered Exam Preparation</title>
+  <meta name="description"
+    content="AI-powered study assistant for NEET and Class 12 IPE exam preparation in Biology, Chemistry, and Physics.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-logo">
+        <div class="logo-icon">📚</div>
+        <h1>NEET Study Assistant</h1>
+      </div>
+      <nav class="header-nav">
+        <button class="nav-btn active" data-view="study" onclick="switchView('study')">
+          🏠 Study
+        </button>
+        <button class="nav-btn" data-view="saved" onclick="switchView('saved')">
+          🔖 Saved
+        </button>
+        <button class="nav-btn" data-view="history" onclick="switchView('history')">
+          📜 History
+        </button>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <!-- Subject Selection -->
+        <div class="sidebar-section">
+          <h3 class="sidebar-title">Subjects</h3>
+          <div class="subject-cards">
+            <button class="subject-card biology" onclick="selectSubject('biology')">
+              <div class="subject-icon biology">🧬</div>
+              <div class="subject-info">
+                <h3>Biology</h3>
+                <p id="bio-chapters">19 chapters</p>
+              </div>
+            </button>
+            <button class="subject-card chemistry" onclick="selectSubject('chemistry')">
+              <div class="subject-icon chemistry">⚗️</div>
+              <div class="subject-info">
+                <h3>Chemistry</h3>
+                <p id="chem-chapters">9 chapters</p>
+              </div>
+            </button>
+            <button class="subject-card physics" onclick="selectSubject('physics')">
+              <div class="subject-icon physics">⚛️</div>
+              <div class="subject-info">
+                <h3>Physics</h3>
+                <p id="phys-chapters">14 chapters</p>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Class Toggle -->
+        <div class="sidebar-section">
+          <h3 class="sidebar-title">Class</h3>
+          <div class="class-toggle">
+            <button class="class-btn" data-class="11" onclick="selectClass('11')">Class 11</button>
+            <button class="class-btn active" data-class="12" onclick="selectClass('12')">Class 12</button>
+          </div>
+        </div>
+
+        <!-- Chapter List -->
+        <div class="sidebar-section" id="chapters-section" style="display: none;">
+          <h3 class="sidebar-title">Chapters</h3>
+          <input type="text" class="search-input" placeholder="Search chapters..." oninput="filterChapters(this.value)">
+          <div class="chapter-list" id="chapter-list"></div>
+        </div>
+      </aside>
+
+      <!-- Content Area -->
+      <div class="content-area" id="content-area">
+        <!-- Welcome Screen (default) -->
+        <div class="welcome-screen" id="welcome-screen">
+          <div class="welcome-icon">🎓</div>
+          <h2>Welcome to NEET Study Assistant</h2>
+          <p>Your AI-powered companion for NEET & IPE exam preparation. Get instant explanations, NCERT references, and
+            practice MCQs for Biology, Chemistry, and Physics.</p>
+
+          <div class="quick-actions">
+            <button class="quick-action" onclick="selectSubject('biology')">📖 Start with Biology</button>
+            <button class="quick-action" onclick="window.open('https://ncert.nic.in/textbook.php', '_blank')">📚 Browse
+              NCERT Books</button>
+            <button class="quick-action" onclick="selectSubject('physics')">⚛️ Study Physics</button>
+          </div>
+        </div>
+
+        <!-- Chapter Content -->
+        <div class="chapter-content" id="chapter-content" style="display: none;">
+          <div class="chapter-header">
+            <div class="chapter-badges">
+              <span class="badge" id="chapter-badge">Chapter 1</span>
+              <span class="badge subject-badge" id="subject-badge">Biology</span>
+              <span class="badge" id="class-badge">Class 12</span>
+            </div>
+            <h2 id="chapter-title">Chapter Title</h2>
+            <p id="chapter-book">Book Name</p>
+          </div>
+
+          <!-- AI Container -->
+          <div class="ai-container">
+            <div class="ai-header">
+              <h3>✨ AI Study Assistant</h3>
+              <div class="ai-actions">
+                <button class="ai-action-btn" onclick="aiAction('explain')">💡 Explain</button>
+                <button class="ai-action-btn" onclick="aiAction('eli5')">🧠 Simplify</button>
+                <button class="ai-action-btn" onclick="aiAction('keypoints')">🎯 NEET Points</button>
+                <button class="ai-action-btn" onclick="aiAction('mcq')">📝 Practice MCQs</button>
+                <button class="ai-action-btn" onclick="aiAction('ncert')">📄 NCERT Ref</button>
+              </div>
+            </div>
+            <div class="ai-content" id="ai-content">
+              <div class="ai-placeholder">
+                <span>✨</span>
+                <p>Click an action button above to get AI-powered explanations!</p>
+                <p class="small">Or type your specific question below.</p>
+              </div>
+            </div>
+            <div class="ai-input-container">
+              <input type="text" class="ai-input" id="ai-input" placeholder="Ask anything about this topic...">
+              <button class="ai-send-btn" onclick="sendCustomQuery()">📤 Ask</button>
+            </div>
+          </div>
+
+          <!-- NCERT Reference Card -->
+          <div class="ncert-card">
+            <h4>📖 NCERT Reference</h4>
+            <p id="ncert-book-ref">Book name - Chapter X</p>
+            <a href="#" id="ncert-pdf-link" target="_blank" class="ncert-link">
+              📥 Download PDF from NCERT
+            </a>
+          </div>
+        </div>
+
+        <!-- Saved Content View -->
+        <div class="saved-content" id="saved-view" style="display: none;">
+          <h2>🔖 Saved Content</h2>
+          <p>Your saved explanations are stored locally and work offline.</p>
+          <div id="saved-list" class="saved-list"></div>
+        </div>
+
+        <!-- History View -->
+        <div class="history-content" id="history-view" style="display: none;">
+          <h2>📜 Study History</h2>
+          <p>Topics you've recently studied.</p>
+          <div id="history-list" class="saved-list"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- MCQ Modal -->
+    <div class="modal-overlay" id="mcq-modal" style="display: none;">
+      <div class="modal mcq-modal">
+        <div class="modal-header">
+          <h2>📝 Practice MCQs</h2>
+          <button class="modal-close" onclick="closeMCQModal()">✕</button>
+        </div>
+        <div class="modal-body" id="mcq-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
