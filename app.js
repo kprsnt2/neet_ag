@@ -4,6 +4,8 @@
 let currentSubject = null;
 let currentClass = '12';
 let currentChapter = null;
+let currentSubtopic = null;
+let expandedChapters = {};
 let allChapters = [];
 let isLoading = false;
 let conversationHistory = [];
@@ -201,7 +203,7 @@ function loadChapters() {
     renderChapters(allChapters);
 }
 
-// Render chapters
+// Render chapters with subtopics
 function renderChapters(chapters) {
     const container = document.getElementById('chapter-list');
     const completed = getCompletedChapters();
@@ -211,34 +213,95 @@ function renderChapters(chapters) {
         return;
     }
 
-    container.innerHTML = chapters.map(ch => {
-        const isCompleted = completed.includes(`${currentSubject}-${currentClass}-${ch.number}`);
-        return `
-            <button class="chapter-item ${currentChapter?.number === ch.number ? 'active' : ''} ${isCompleted ? 'completed' : ''}" 
-                    onclick="selectChapter(${ch.number})">
-                <span class="chapter-number">${isCompleted ? '✓' : ch.number}</span>
-                <span style="flex: 1; text-align: left;">${ch.name}</span>
-            </button>
+    // Add priority legend if chapters have subtopics
+    const hasSubtopics = chapters.some(ch => ch.subtopics && ch.subtopics.length > 0);
+    let html = '';
+
+    if (hasSubtopics) {
+        html += `
+            <div class="priority-legend">
+                <div class="priority-legend-item"><span class="priority-dot high"></span> High Priority</div>
+                <div class="priority-legend-item"><span class="priority-dot medium"></span> Medium</div>
+                <div class="priority-legend-item"><span class="priority-dot low"></span> Low</div>
+            </div>
         `;
+    }
+
+    html += chapters.map(ch => {
+        const isCompleted = completed.includes(`${currentSubject}-${currentClass}-${ch.number}`);
+        const hasChapterSubtopics = ch.subtopics && ch.subtopics.length > 0;
+        const isExpanded = expandedChapters[`${currentSubject}-${currentClass}-${ch.number}`];
+        const isActive = currentChapter?.number === ch.number;
+
+        let chapterHtml = `
+            <div class="chapter-group">
+                <button class="chapter-item ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''} ${hasChapterSubtopics ? 'has-subtopics' : ''} ${isExpanded ? 'expanded' : ''}" 
+                        onclick="${hasChapterSubtopics ? `toggleChapterSubtopics(${ch.number}, event)` : `selectChapter(${ch.number})`}">
+                    <span class="chapter-number">${isCompleted ? '✓' : ch.number}</span>
+                    <span style="flex: 1; text-align: left;">${ch.name}</span>
+                    ${hasChapterSubtopics ? '<span class="expand-icon">▼</span>' : ''}
+                </button>
+        `;
+
+        if (hasChapterSubtopics) {
+            chapterHtml += `
+                <div class="subtopics-list ${isExpanded ? 'expanded' : ''}" id="subtopics-${ch.number}">
+                    ${ch.subtopics.map(sub => `
+                        <button class="subtopic-item ${currentSubtopic?.id === sub.id && currentChapter?.number === ch.number ? 'active' : ''}"
+                                onclick="selectSubtopic(${ch.number}, ${sub.id})">
+                            <span class="priority-dot ${sub.priority}"></span>
+                            <span>${sub.name}</span>
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        chapterHtml += '</div>';
+        return chapterHtml;
     }).join('');
+
+    container.innerHTML = html;
+}
+
+// Toggle chapter subtopics
+function toggleChapterSubtopics(chapterNumber, event) {
+    event.stopPropagation();
+    const key = `${currentSubject}-${currentClass}-${chapterNumber}`;
+    expandedChapters[key] = !expandedChapters[key];
+    renderChapters(allChapters);
 }
 
 // Filter chapters
 function filterChapters(query) {
     const filtered = allChapters.filter(ch =>
-        ch.name.toLowerCase().includes(query.toLowerCase())
+        ch.name.toLowerCase().includes(query.toLowerCase()) ||
+        (ch.subtopics && ch.subtopics.some(sub => sub.name.toLowerCase().includes(query.toLowerCase())))
     );
     renderChapters(filtered);
 }
 
-// Select chapter
+// Select chapter (without subtopic)
 function selectChapter(chapterNumber) {
     currentChapter = allChapters.find(ch => ch.number === chapterNumber);
     if (!currentChapter) return;
 
+    currentSubtopic = null; // Reset subtopic
     conversationHistory = [];
     showChapterContent();
     addToHistory(currentChapter.name, currentSubject, currentClass);
+}
+
+// Select subtopic
+function selectSubtopic(chapterNumber, subtopicId) {
+    currentChapter = allChapters.find(ch => ch.number === chapterNumber);
+    if (!currentChapter) return;
+
+    currentSubtopic = currentChapter.subtopics?.find(sub => sub.id === subtopicId) || null;
+    conversationHistory = [];
+    showChapterContent();
+    renderChapters(allChapters); // Re-render to show active subtopic
+    addToHistory(`${currentChapter.name} - ${currentSubtopic?.name}`, currentSubject, currentClass);
 }
 
 function showChapterContent() {
@@ -254,7 +317,13 @@ function showChapterContent() {
     document.getElementById('subject-badge').textContent = NCERT_DATA[currentSubject].name;
     document.getElementById('subject-badge').className = `badge subject-badge ${currentSubject}`;
     document.getElementById('class-badge').textContent = `Class ${currentClass}`;
-    document.getElementById('chapter-title').textContent = currentChapter.name;
+
+    // Chapter title with optional subtopic badge
+    let titleHtml = currentChapter.name;
+    if (currentSubtopic) {
+        titleHtml += ` <span class="current-subtopic-badge"><span class="priority-dot ${currentSubtopic.priority}"></span>${currentSubtopic.name}</span>`;
+    }
+    document.getElementById('chapter-title').innerHTML = titleHtml;
     document.getElementById('chapter-book').textContent = currentChapter.book;
 
     // Update complete button
@@ -265,11 +334,35 @@ function showChapterContent() {
     document.getElementById('ncert-book-ref').textContent = `${currentChapter.book} - Chapter ${currentChapter.number}`;
     document.getElementById('ncert-pdf-link').href = currentChapter.pdfUrl;
 
-    // Clear AI content
+    // Build subtopic pills if chapter has subtopics
+    let subtopicPillsHtml = '';
+    if (currentChapter.subtopics && currentChapter.subtopics.length > 0) {
+        subtopicPillsHtml = `
+            <div class="subtopic-pills">
+                <button class="subtopic-pill ${!currentSubtopic ? 'active' : ''}" onclick="selectChapter(${currentChapter.number})">
+                    📖 Full Chapter
+                </button>
+                ${currentChapter.subtopics.map(sub => `
+                    <button class="subtopic-pill ${currentSubtopic?.id === sub.id ? 'active' : ''}" 
+                            onclick="selectSubtopic(${currentChapter.number}, ${sub.id})">
+                        <span class="priority-dot ${sub.priority}"></span>
+                        ${sub.name}
+                    </button>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    // AI placeholder with subtopic pills
+    const focusText = currentSubtopic
+        ? `Get AI explanations for <strong>${currentSubtopic.name}</strong>`
+        : 'Click an action button above to get AI-powered explanations!';
+
     document.getElementById('ai-content').innerHTML = `
+        ${subtopicPillsHtml}
         <div class="ai-placeholder">
             <span>✨</span>
-            <p>Click an action button above to get AI-powered explanations!</p>
+            <p>${focusText}</p>
             <p class="small">Or type your specific question below.</p>
         </div>
     `;
@@ -311,15 +404,22 @@ async function aiAction(type) {
     isLoading = true;
     showLoading();
 
+    // Build topic with optional subtopic focus
+    let topic = currentChapter.name;
+    if (currentSubtopic) {
+        topic = `${currentChapter.name} - specifically about: ${currentSubtopic.name}`;
+    }
+
     try {
         const response = await fetch(`${API_BASE_URL}/api/explain`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                topic: currentChapter.name,
+                topic: topic,
                 subject: currentSubject,
                 class_level: currentClass,
-                action_type: type
+                action_type: type,
+                subtopic: currentSubtopic?.name || null
             })
         });
 

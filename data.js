@@ -25,22 +25,233 @@ const NCERT_DATA = {
             { number: 19, name: 'Chemical Coordination and Integration', pdfUrl: 'https://ncert.nic.in/textbook/pdf/kebo119.pdf', book: 'Biology Class 11' },
         ],
         '12': [
-            { number: 1, name: 'Reproduction in Organisms', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo101.pdf', book: 'Biology Class 12' },
-            { number: 2, name: 'Sexual Reproduction in Flowering Plants', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo102.pdf', book: 'Biology Class 12' },
-            { number: 3, name: 'Human Reproduction', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo103.pdf', book: 'Biology Class 12' },
-            { number: 4, name: 'Reproductive Health', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo104.pdf', book: 'Biology Class 12' },
-            { number: 5, name: 'Principles of Inheritance and Variation', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo105.pdf', book: 'Biology Class 12' },
-            { number: 6, name: 'Molecular Basis of Inheritance', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo106.pdf', book: 'Biology Class 12' },
-            { number: 7, name: 'Evolution', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo107.pdf', book: 'Biology Class 12' },
-            { number: 8, name: 'Human Health and Disease', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo108.pdf', book: 'Biology Class 12' },
-            { number: 9, name: 'Strategies for Enhancement in Food Production', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo109.pdf', book: 'Biology Class 12' },
-            { number: 10, name: 'Microbes in Human Welfare', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo110.pdf', book: 'Biology Class 12' },
-            { number: 11, name: 'Biotechnology: Principles and Processes', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo111.pdf', book: 'Biology Class 12' },
-            { number: 12, name: 'Biotechnology and its Applications', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo112.pdf', book: 'Biology Class 12' },
-            { number: 13, name: 'Organisms and Populations', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo113.pdf', book: 'Biology Class 12' },
-            { number: 14, name: 'Ecosystem', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo114.pdf', book: 'Biology Class 12' },
-            { number: 15, name: 'Biodiversity and Conservation', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo115.pdf', book: 'Biology Class 12' },
-            { number: 16, name: 'Environmental Issues', pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo116.pdf', book: 'Biology Class 12' },
+            {
+                number: 1,
+                name: 'Reproduction in Organisms',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo101.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Asexual Reproduction', priority: 'medium' },
+                    { id: 2, name: 'Sexual Reproduction', priority: 'high' },
+                    { id: 3, name: 'Pre-fertilisation Events', priority: 'high' },
+                    { id: 4, name: 'Fertilisation', priority: 'high' },
+                    { id: 5, name: 'Post-fertilisation Events', priority: 'medium' }
+                ]
+            },
+            {
+                number: 2,
+                name: 'Sexual Reproduction in Flowering Plants',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo102.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Flower Structure', priority: 'medium' },
+                    { id: 2, name: 'Stamen & Microsporogenesis', priority: 'high' },
+                    { id: 3, name: 'Pistil & Megasporogenesis', priority: 'high' },
+                    { id: 4, name: 'Pollination', priority: 'high' },
+                    { id: 5, name: 'Double Fertilisation', priority: 'high' },
+                    { id: 6, name: 'Embryo Development', priority: 'high' },
+                    { id: 7, name: 'Seed & Fruit Formation', priority: 'medium' },
+                    { id: 8, name: 'Apomixis & Polyembryony', priority: 'medium' }
+                ]
+            },
+            {
+                number: 3,
+                name: 'Human Reproduction',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo103.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Male Reproductive System', priority: 'high' },
+                    { id: 2, name: 'Female Reproductive System', priority: 'high' },
+                    { id: 3, name: 'Spermatogenesis', priority: 'high' },
+                    { id: 4, name: 'Oogenesis', priority: 'high' },
+                    { id: 5, name: 'Menstrual Cycle', priority: 'high' },
+                    { id: 6, name: 'Fertilisation & Implantation', priority: 'high' },
+                    { id: 7, name: 'Pregnancy & Embryonic Development', priority: 'high' },
+                    { id: 8, name: 'Parturition & Lactation', priority: 'medium' }
+                ]
+            },
+            {
+                number: 4,
+                name: 'Reproductive Health',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo104.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Reproductive Health Problems', priority: 'medium' },
+                    { id: 2, name: 'Population Control', priority: 'medium' },
+                    { id: 3, name: 'Contraception Methods', priority: 'high' },
+                    { id: 4, name: 'STIs & Prevention', priority: 'high' },
+                    { id: 5, name: 'Infertility & ART', priority: 'high' }
+                ]
+            },
+            {
+                number: 5,
+                name: 'Principles of Inheritance and Variation',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo105.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Mendel\'s Laws', priority: 'high' },
+                    { id: 2, name: 'Monohybrid & Dihybrid Cross', priority: 'high' },
+                    { id: 3, name: 'Incomplete Dominance & Codominance', priority: 'high' },
+                    { id: 4, name: 'Multiple Alleles & Blood Groups', priority: 'high' },
+                    { id: 5, name: 'Pleiotropy', priority: 'medium' },
+                    { id: 6, name: 'Linkage & Recombination', priority: 'high' },
+                    { id: 7, name: 'Sex Determination', priority: 'high' },
+                    { id: 8, name: 'Sex-linked Inheritance', priority: 'high' },
+                    { id: 9, name: 'Chromosomal Disorders', priority: 'high' },
+                    { id: 10, name: 'Pedigree Analysis', priority: 'high' }
+                ]
+            },
+            {
+                number: 6,
+                name: 'Molecular Basis of Inheritance',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo106.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'DNA Structure', priority: 'high' },
+                    { id: 2, name: 'DNA Replication', priority: 'high' },
+                    { id: 3, name: 'Transcription', priority: 'high' },
+                    { id: 4, name: 'Genetic Code', priority: 'high' },
+                    { id: 5, name: 'Translation', priority: 'high' },
+                    { id: 6, name: 'Lac Operon', priority: 'high' },
+                    { id: 7, name: 'Human Genome Project', priority: 'medium' },
+                    { id: 8, name: 'DNA Fingerprinting', priority: 'high' }
+                ]
+            },
+            {
+                number: 7,
+                name: 'Evolution',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo107.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Origin of Life', priority: 'medium' },
+                    { id: 2, name: 'Evidences of Evolution', priority: 'high' },
+                    { id: 3, name: 'Darwinism & Natural Selection', priority: 'high' },
+                    { id: 4, name: 'Hardy-Weinberg Principle', priority: 'high' },
+                    { id: 5, name: 'Speciation', priority: 'high' },
+                    { id: 6, name: 'Human Evolution', priority: 'medium' }
+                ]
+            },
+            {
+                number: 8,
+                name: 'Human Health and Disease',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo108.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Common Diseases', priority: 'high' },
+                    { id: 2, name: 'Immunity Types', priority: 'high' },
+                    { id: 3, name: 'AIDS', priority: 'high' },
+                    { id: 4, name: 'Cancer', priority: 'high' },
+                    { id: 5, name: 'Drugs & Alcohol Abuse', priority: 'medium' }
+                ]
+            },
+            {
+                number: 9,
+                name: 'Strategies for Enhancement in Food Production',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo109.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Animal Husbandry', priority: 'medium' },
+                    { id: 2, name: 'Plant Breeding', priority: 'high' },
+                    { id: 3, name: 'Single Cell Protein', priority: 'low' },
+                    { id: 4, name: 'Tissue Culture', priority: 'high' }
+                ]
+            },
+            {
+                number: 10,
+                name: 'Microbes in Human Welfare',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo110.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Microbes in Household Products', priority: 'medium' },
+                    { id: 2, name: 'Industrial Products', priority: 'high' },
+                    { id: 3, name: 'Sewage Treatment', priority: 'high' },
+                    { id: 4, name: 'Biogas Production', priority: 'medium' },
+                    { id: 5, name: 'Biocontrol Agents', priority: 'medium' },
+                    { id: 6, name: 'Biofertilizers', priority: 'medium' }
+                ]
+            },
+            {
+                number: 11,
+                name: 'Biotechnology: Principles and Processes',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo111.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Genetic Engineering Principles', priority: 'high' },
+                    { id: 2, name: 'Restriction Enzymes', priority: 'high' },
+                    { id: 3, name: 'Cloning Vectors', priority: 'high' },
+                    { id: 4, name: 'rDNA Technology Steps', priority: 'high' },
+                    { id: 5, name: 'PCR', priority: 'high' },
+                    { id: 6, name: 'Gel Electrophoresis', priority: 'high' }
+                ]
+            },
+            {
+                number: 12,
+                name: 'Biotechnology and its Applications',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo112.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Bt Crops', priority: 'high' },
+                    { id: 2, name: 'RNA Interference', priority: 'medium' },
+                    { id: 3, name: 'Gene Therapy', priority: 'high' },
+                    { id: 4, name: 'Transgenic Animals', priority: 'medium' },
+                    { id: 5, name: 'Ethical Issues', priority: 'low' }
+                ]
+            },
+            {
+                number: 13,
+                name: 'Organisms and Populations',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo113.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Organism & Environment', priority: 'medium' },
+                    { id: 2, name: 'Adaptations', priority: 'high' },
+                    { id: 3, name: 'Population Attributes', priority: 'high' },
+                    { id: 4, name: 'Population Growth', priority: 'high' },
+                    { id: 5, name: 'Population Interactions', priority: 'high' }
+                ]
+            },
+            {
+                number: 14,
+                name: 'Ecosystem',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo114.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Ecosystem Structure', priority: 'high' },
+                    { id: 2, name: 'Productivity', priority: 'high' },
+                    { id: 3, name: 'Energy Flow', priority: 'high' },
+                    { id: 4, name: 'Food Chains & Webs', priority: 'high' },
+                    { id: 5, name: 'Ecological Pyramids', priority: 'high' },
+                    { id: 6, name: 'Nutrient Cycling', priority: 'high' },
+                    { id: 7, name: 'Ecological Succession', priority: 'high' }
+                ]
+            },
+            {
+                number: 15,
+                name: 'Biodiversity and Conservation',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo115.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Biodiversity Types', priority: 'high' },
+                    { id: 2, name: 'Biodiversity Patterns', priority: 'medium' },
+                    { id: 3, name: 'Importance of Biodiversity', priority: 'medium' },
+                    { id: 4, name: 'Loss of Biodiversity', priority: 'high' },
+                    { id: 5, name: 'Biodiversity Conservation', priority: 'high' }
+                ]
+            },
+            {
+                number: 16,
+                name: 'Environmental Issues',
+                pdfUrl: 'https://ncert.nic.in/textbook/pdf/lebo116.pdf',
+                book: 'Biology Class 12',
+                subtopics: [
+                    { id: 1, name: 'Air Pollution', priority: 'high' },
+                    { id: 2, name: 'Water Pollution', priority: 'high' },
+                    { id: 3, name: 'Solid Waste Management', priority: 'medium' },
+                    { id: 4, name: 'Ozone Depletion', priority: 'high' },
+                    { id: 5, name: 'Greenhouse Effect', priority: 'high' },
+                    { id: 6, name: 'Deforestation', priority: 'medium' }
+                ]
+            },
         ]
     },
     chemistry: {
