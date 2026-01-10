@@ -171,6 +171,26 @@ function selectSubject(subject) {
     document.getElementById('chapters-section').style.display = 'block';
     updateChapterCounts();
     loadChapters();
+
+    // On mobile, open sidebar to show chapters
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('mobile-sidebar-overlay');
+        const menuBtn = document.getElementById('mobile-menu-btn');
+
+        if (sidebar && !sidebar.classList.contains('mobile-open')) {
+            sidebar.classList.add('mobile-open');
+            overlay.classList.add('active');
+            menuBtn.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Scroll to chapters section
+        setTimeout(() => {
+            document.getElementById('chapters-section').scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+    }
 }
 
 // Class selection
