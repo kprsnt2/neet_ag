@@ -110,8 +110,8 @@ async def call_claude(prompt: str, system_prompt: str, api_key: str):
         'content-type': 'application/json'
     }
     data = {
-        "model": "claude-3-5-haiku-20241022",
-        "max_tokens": 2048,
+        "model": "claude-haiku-4-5-20251001",
+        "max_tokens": 4096,
         "system": system_prompt,
         "messages": [{"role": "user", "content": prompt}]
     }
@@ -123,15 +123,15 @@ async def call_claude(prompt: str, system_prompt: str, api_key: str):
         return result['content'][0]['text']
 
 async def call_gemini(prompt: str, system_prompt: str, api_key: str):
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
     headers = {'Content-Type': 'application/json'}
     data = {
         "contents": [{
             "parts": [{"text": f"{system_prompt}\n\nTask: {prompt}"}]
         }],
         "generationConfig": {
-            "maxOutputTokens": 2048,
-            "temperature": 0.7
+            "maxOutputTokens": 4096,
+            "temperature": 0.1
         }
     }
     async with httpx.AsyncClient() as client:

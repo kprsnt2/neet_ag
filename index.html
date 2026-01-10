@@ -11,7 +11,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="styles.css">
@@ -21,27 +21,96 @@
   <div id="app">
     <!-- Header -->
     <header class="header">
+      <!-- Mobile hamburger menu -->
+      <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="toggleMobileSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
       <div class="header-logo">
         <div class="logo-icon">📚</div>
-        <h1>NEET Study Assistant</h1>
+        <h1 class="logo-text">NEET Study Assistant</h1>
       </div>
+
+      <!-- Global Search -->
+      <div class="global-search-container">
+        <input type="text" class="global-search" id="global-search"
+          placeholder="🔍 Search any topic (e.g., mitosis, electrochemistry, Newton's laws...)"
+          oninput="handleGlobalSearch(this.value)">
+        <div class="search-results-dropdown" id="search-results" style="display: none;"></div>
+      </div>
+
+      <!-- Mobile search button -->
+      <button class="mobile-search-btn" id="mobile-search-btn" onclick="toggleMobileSearch()">🔍</button>
+
       <nav class="header-nav">
         <button class="nav-btn active" data-view="study" onclick="switchView('study')">
           🏠 Study
         </button>
+        <button class="nav-btn" data-view="formulas" onclick="switchView('formulas')">
+          📐 Formulas
+        </button>
+        <button class="nav-btn" data-view="progress" onclick="switchView('progress')">
+          📊 Progress
+        </button>
         <button class="nav-btn" data-view="saved" onclick="switchView('saved')">
           🔖 Saved
         </button>
-        <button class="nav-btn" data-view="history" onclick="switchView('history')">
-          📜 History
-        </button>
       </nav>
     </header>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="mobile-sidebar-overlay" id="mobile-sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+    <!-- Mobile Search Overlay -->
+    <div class="mobile-search-overlay" id="mobile-search-overlay">
+      <div class="mobile-search-container">
+        <input type="text" class="mobile-search-input" id="mobile-search-input" placeholder="Search topics..."
+          oninput="handleGlobalSearch(this.value)">
+        <button class="mobile-search-close" onclick="toggleMobileSearch()">✕</button>
+      </div>
+      <div class="mobile-search-results" id="mobile-search-results"></div>
+    </div>
+
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="bottom-nav" id="bottom-nav">
+      <button class="bottom-nav-btn active" data-view="study" onclick="switchView('study')">
+        <span class="bottom-nav-icon">🏠</span>
+        <span class="bottom-nav-label">Study</span>
+      </button>
+      <button class="bottom-nav-btn" data-view="formulas" onclick="switchView('formulas')">
+        <span class="bottom-nav-icon">📐</span>
+        <span class="bottom-nav-label">Formulas</span>
+      </button>
+      <button class="bottom-nav-btn" data-view="progress" onclick="switchView('progress')">
+        <span class="bottom-nav-icon">📊</span>
+        <span class="bottom-nav-label">Progress</span>
+      </button>
+      <button class="bottom-nav-btn" data-view="saved" onclick="switchView('saved')">
+        <span class="bottom-nav-icon">🔖</span>
+        <span class="bottom-nav-label">Saved</span>
+      </button>
+    </nav>
 
     <!-- Main Content -->
     <main class="main-content">
       <!-- Sidebar -->
       <aside class="sidebar">
+        <!-- Exam Countdown -->
+        <div class="countdown-section">
+          <div class="countdown-card ipe">
+            <span class="countdown-label">IPE Exams</span>
+            <span class="countdown-days" id="ipe-countdown">--</span>
+            <span class="countdown-unit">days left</span>
+          </div>
+          <div class="countdown-card neet">
+            <span class="countdown-label">NEET 2026</span>
+            <span class="countdown-days" id="neet-countdown">--</span>
+            <span class="countdown-unit">days left</span>
+          </div>
+        </div>
+
         <!-- Subject Selection -->
         <div class="sidebar-section">
           <h3 class="sidebar-title">Subjects</h3>
@@ -51,6 +120,9 @@
               <div class="subject-info">
                 <h3>Biology</h3>
                 <p id="bio-chapters">19 chapters</p>
+                <div class="subject-progress">
+                  <div class="progress-bar" id="bio-progress" style="width: 0%"></div>
+                </div>
               </div>
             </button>
             <button class="subject-card chemistry" onclick="selectSubject('chemistry')">
@@ -58,6 +130,9 @@
               <div class="subject-info">
                 <h3>Chemistry</h3>
                 <p id="chem-chapters">9 chapters</p>
+                <div class="subject-progress">
+                  <div class="progress-bar" id="chem-progress" style="width: 0%"></div>
+                </div>
               </div>
             </button>
             <button class="subject-card physics" onclick="selectSubject('physics')">
@@ -65,6 +140,9 @@
               <div class="subject-info">
                 <h3>Physics</h3>
                 <p id="phys-chapters">14 chapters</p>
+                <div class="subject-progress">
+                  <div class="progress-bar" id="phys-progress" style="width: 0%"></div>
+                </div>
               </div>
             </button>
           </div>
@@ -82,7 +160,7 @@
         <!-- Chapter List -->
         <div class="sidebar-section" id="chapters-section" style="display: none;">
           <h3 class="sidebar-title">Chapters</h3>
-          <input type="text" class="search-input" placeholder="Search chapters..." oninput="filterChapters(this.value)">
+          <input type="text" class="search-input" placeholder="Filter chapters..." oninput="filterChapters(this.value)">
           <div class="chapter-list" id="chapter-list"></div>
         </div>
       </aside>
@@ -91,26 +169,68 @@
       <div class="content-area" id="content-area">
         <!-- Welcome Screen (default) -->
         <div class="welcome-screen" id="welcome-screen">
-          <div class="welcome-icon">🎓</div>
-          <h2>Welcome to NEET Study Assistant</h2>
-          <p>Your AI-powered companion for NEET & IPE exam preparation. Get instant explanations, NCERT references, and
-            practice MCQs for Biology, Chemistry, and Physics.</p>
+          <div class="welcome-hero">
+            <div class="welcome-icon-wrapper">
+              <div class="welcome-icon">🎓</div>
+              <div class="icon-glow"></div>
+            </div>
+            <h2>Welcome to NEET Study Assistant</h2>
+            <p>Your AI-powered companion for NEET & IPE exam preparation. Get instant explanations, practice MCQs, and
+              master Biology, Chemistry, and Physics.</p>
+          </div>
+
+          <!-- Stats Cards -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-icon">📖</span>
+              <span class="stat-value" id="total-chapters">96</span>
+              <span class="stat-label">Total Chapters</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon">✅</span>
+              <span class="stat-value" id="completed-chapters">0</span>
+              <span class="stat-label">Completed</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon">🎯</span>
+              <span class="stat-value" id="mcq-accuracy">0%</span>
+              <span class="stat-label">MCQ Accuracy</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon">🔥</span>
+              <span class="stat-value" id="study-streak">0</span>
+              <span class="stat-label">Day Streak</span>
+            </div>
+          </div>
 
           <div class="quick-actions">
-            <button class="quick-action" onclick="selectSubject('biology')">📖 Start with Biology</button>
-            <button class="quick-action" onclick="window.open('https://ncert.nic.in/textbook.php', '_blank')">📚 Browse
-              NCERT Books</button>
-            <button class="quick-action" onclick="selectSubject('physics')">⚛️ Study Physics</button>
+            <button class="quick-action biology-action" onclick="selectSubject('biology')">🧬 Start Biology</button>
+            <button class="quick-action chemistry-action" onclick="selectSubject('chemistry')">⚗️ Start
+              Chemistry</button>
+            <button class="quick-action physics-action" onclick="selectSubject('physics')">⚛️ Start Physics</button>
+            <button class="quick-action" onclick="window.open('https://ncert.nic.in/textbook.php', '_blank')">📚 NCERT
+              Books</button>
           </div>
+
+          <!-- Recent Activity -->
+          <div class="recent-activity" id="recent-activity"></div>
         </div>
 
         <!-- Chapter Content -->
         <div class="chapter-content" id="chapter-content" style="display: none;">
           <div class="chapter-header">
-            <div class="chapter-badges">
-              <span class="badge" id="chapter-badge">Chapter 1</span>
-              <span class="badge subject-badge" id="subject-badge">Biology</span>
-              <span class="badge" id="class-badge">Class 12</span>
+            <div class="chapter-header-top">
+              <div class="chapter-badges">
+                <span class="badge" id="chapter-badge">Chapter 1</span>
+                <span class="badge subject-badge" id="subject-badge">Biology</span>
+                <span class="badge" id="class-badge">Class 12</span>
+              </div>
+              <div class="chapter-actions">
+                <button class="icon-btn" onclick="markChapterComplete()" title="Mark as Complete">
+                  <span id="complete-icon">☐</span>
+                </button>
+                <button class="icon-btn" onclick="shareChapter()" title="Share">🔗</button>
+              </div>
             </div>
             <h2 id="chapter-title">Chapter Title</h2>
             <p id="chapter-book">Book Name</p>
@@ -121,11 +241,24 @@
             <div class="ai-header">
               <h3>✨ AI Study Assistant</h3>
               <div class="ai-actions">
-                <button class="ai-action-btn" onclick="aiAction('explain')">💡 Explain</button>
-                <button class="ai-action-btn" onclick="aiAction('eli5')">🧠 Simplify</button>
-                <button class="ai-action-btn" onclick="aiAction('keypoints')">🎯 NEET Points</button>
-                <button class="ai-action-btn" onclick="aiAction('mcq')">📝 Practice MCQs</button>
-                <button class="ai-action-btn" onclick="aiAction('ncert')">📄 NCERT Ref</button>
+                <button class="ai-action-btn" onclick="aiAction('explain')" title="Detailed explanation">
+                  💡 Explain
+                </button>
+                <button class="ai-action-btn" onclick="aiAction('eli5')" title="Simple explanation">
+                  🧒 Simple
+                </button>
+                <button class="ai-action-btn" onclick="aiAction('keypoints')" title="NEET key points">
+                  🎯 Key Points
+                </button>
+                <button class="ai-action-btn" onclick="aiAction('mcq')" title="Practice MCQs">
+                  📝 MCQs
+                </button>
+                <button class="ai-action-btn" onclick="aiAction('visual')" title="Visual diagram">
+                  📊 Diagram
+                </button>
+                <button class="ai-action-btn" onclick="aiAction('ncert')" title="NCERT reference">
+                  📄 NCERT
+                </button>
               </div>
             </div>
             <div class="ai-content" id="ai-content">
@@ -135,6 +268,17 @@
                 <p class="small">Or type your specific question below.</p>
               </div>
             </div>
+
+            <!-- Quick Follow-up Buttons -->
+            <div class="follow-up-container" id="follow-up-container" style="display: none;">
+              <span class="follow-up-label">Quick follow-ups:</span>
+              <button class="follow-up-btn" onclick="followUp('example')">📌 Give Example</button>
+              <button class="follow-up-btn" onclick="followUp('simpler')">🔄 Explain Simpler</button>
+              <button class="follow-up-btn" onclick="followUp('compare')">⚖️ Compare</button>
+              <button class="follow-up-btn" onclick="followUp('telugu')">🌐 In Telugu</button>
+              <button class="follow-up-btn" onclick="followUp('mnemonics')">🧠 Mnemonics</button>
+            </div>
+
             <div class="ai-input-container">
               <input type="text" class="ai-input" id="ai-input" placeholder="Ask anything about this topic...">
               <button class="ai-send-btn" onclick="sendCustomQuery()">📤 Ask</button>
@@ -151,18 +295,84 @@
           </div>
         </div>
 
+        <!-- Formulas View -->
+        <div class="formulas-content" id="formulas-view" style="display: none;">
+          <div class="formulas-header">
+            <h2>📐 Quick Reference - Formulas & Reactions</h2>
+            <p>Essential formulas for quick revision before exams</p>
+            <div class="formula-tabs">
+              <button class="formula-tab active" onclick="showFormulaSubject('physics')">⚛️ Physics</button>
+              <button class="formula-tab" onclick="showFormulaSubject('chemistry')">⚗️ Chemistry</button>
+              <button class="formula-tab" onclick="showFormulaSubject('biology')">🧬 Biology</button>
+            </div>
+          </div>
+          <div class="formula-search">
+            <input type="text" placeholder="Search formulas..." oninput="searchFormulas(this.value)">
+          </div>
+          <div class="formula-list" id="formula-list"></div>
+        </div>
+
+        <!-- Progress View -->
+        <div class="progress-content" id="progress-view" style="display: none;">
+          <h2>📊 Your Progress Dashboard</h2>
+          <div class="progress-overview">
+            <div class="progress-ring-container">
+              <svg class="progress-ring" viewBox="0 0 120 120">
+                <circle class="progress-ring-bg" cx="60" cy="60" r="54" />
+                <circle class="progress-ring-fill" cx="60" cy="60" r="54" id="overall-progress-ring" />
+              </svg>
+              <div class="progress-ring-text">
+                <span class="progress-percentage" id="overall-percentage">0%</span>
+                <span class="progress-label">Overall</span>
+              </div>
+            </div>
+            <div class="progress-stats">
+              <div class="progress-stat-item">
+                <span class="progress-stat-value" id="bio-complete">0/35</span>
+                <span class="progress-stat-label">🧬 Biology</span>
+              </div>
+              <div class="progress-stat-item">
+                <span class="progress-stat-value" id="chem-complete">0/19</span>
+                <span class="progress-stat-label">⚗️ Chemistry</span>
+              </div>
+              <div class="progress-stat-item">
+                <span class="progress-stat-value" id="phys-complete">0/28</span>
+                <span class="progress-stat-label">⚛️ Physics</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mcq-performance">
+            <h3>📝 MCQ Performance</h3>
+            <div class="mcq-stats-grid">
+              <div class="mcq-stat">
+                <span class="mcq-stat-value" id="total-mcqs-attempted">0</span>
+                <span class="mcq-stat-label">Attempted</span>
+              </div>
+              <div class="mcq-stat correct">
+                <span class="mcq-stat-value" id="correct-mcqs">0</span>
+                <span class="mcq-stat-label">Correct</span>
+              </div>
+              <div class="mcq-stat incorrect">
+                <span class="mcq-stat-value" id="incorrect-mcqs">0</span>
+                <span class="mcq-stat-label">Incorrect</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="weak-topics">
+            <h3>⚠️ Topics to Revise</h3>
+            <div id="weak-topics-list" class="weak-topics-list">
+              <p class="empty-state-small">Complete some MCQs to see weak topics</p>
+            </div>
+          </div>
+        </div>
+
         <!-- Saved Content View -->
         <div class="saved-content" id="saved-view" style="display: none;">
           <h2>🔖 Saved Content</h2>
           <p>Your saved explanations are stored locally and work offline.</p>
           <div id="saved-list" class="saved-list"></div>
-        </div>
-
-        <!-- History View -->
-        <div class="history-content" id="history-view" style="display: none;">
-          <h2>📜 Study History</h2>
-          <p>Topics you've recently studied.</p>
-          <div id="history-list" class="saved-list"></div>
         </div>
       </div>
     </main>
@@ -172,14 +382,23 @@
       <div class="modal mcq-modal">
         <div class="modal-header">
           <h2>📝 Practice MCQs</h2>
+          <div class="mcq-difficulty">
+            <button class="difficulty-btn active" onclick="setDifficulty('easy')">Easy</button>
+            <button class="difficulty-btn" onclick="setDifficulty('medium')">Medium</button>
+            <button class="difficulty-btn" onclick="setDifficulty('neet')">NEET Level</button>
+          </div>
           <button class="modal-close" onclick="closeMCQModal()">✕</button>
         </div>
         <div class="modal-body" id="mcq-content"></div>
       </div>
     </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
   </div>
 
   <script src="data.js"></script>
+  <script src="formulas.js"></script>
   <script src="app.js"></script>
 </body>
 

@@ -88,7 +88,7 @@ async function callClaude(prompt, systemPrompt, apiKey) {
         },
         body: JSON.stringify({
             model: "claude-3-5-haiku-20241022",
-            max_tokens: 2048,
+            max_tokens: 3000,
             system: systemPrompt,
             messages: [{ role: "user", content: prompt }]
         })
@@ -104,7 +104,7 @@ async function callClaude(prompt, systemPrompt, apiKey) {
 }
 
 async function callGemini(prompt, systemPrompt, apiKey) {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -112,8 +112,8 @@ async function callGemini(prompt, systemPrompt, apiKey) {
                 parts: [{ text: `${systemPrompt}\n\nTask: ${prompt}` }]
             }],
             generationConfig: {
-                maxOutputTokens: 2048,
-                temperature: 0.7
+                maxOutputTokens: 4096,
+                temperature: 0.2
             }
         })
     });
@@ -146,11 +146,11 @@ Format your response with clear headings (##) and bullet points. Be comprehensiv
     if (action_type === 'eli5') {
         return `You are a friendly tutor explaining ${subject_display} to a ${class_display} student who is struggling.
 Explain "${topic}" in the simplest possible terms:
-1. Use everyday analogies and examples
+1. Use everyday analogies and examples a teenager can relate to
 2. Avoid jargon - when you must use technical terms, explain them simply
 3. Use visual descriptions when helpful
 4. Keep it encouraging and relatable
-5. End with a simple summary
+5. End with a simple summary in 2-3 lines
 
 Make it so simple that anyone could understand, but still accurate for NEET preparation.`;
     }
@@ -158,24 +158,25 @@ Make it so simple that anyone could understand, but still accurate for NEET prep
     if (action_type === 'keypoints') {
         return `You are a NEET exam expert. For "${topic}" in ${subject_display} ${class_display}:
 1. List the TOP 10 most important points for NEET
-2. Mark which points are MOST FREQUENTLY asked
+2. Mark which points are MOST FREQUENTLY asked (add ⭐ for frequently asked)
 3. Include any formulas/reactions that MUST be memorized
 4. Mention typical question patterns
 5. Add 2-3 quick revision points
+6. Include common traps/mistakes students make
 
-Format as a clear, scannable list. This should be perfect for last-minute revision.`;
+Format as a clear, numbered list. This should be perfect for last-minute revision.`;
     }
 
     if (action_type === 'mcq') {
         return `You are a NEET exam question creator. Create 5 NEET-style MCQs for "${topic}" in ${subject_display} ${class_display}.
 
 For each question provide:
-- The question
+- The question (similar to actual NEET difficulty)
 - 4 options (A, B, C, D)
 - Correct answer index (0-3)
 - Brief explanation of why it's correct and why others are wrong
 
-Make questions similar to actual NEET exam difficulty. Include at least one application-based question.
+Include at least one application-based question and one conceptual question.
 
 Response MUST be a raw JSON array like this:
 [
@@ -191,14 +192,48 @@ Do not add any markdown formatting or extra text outside the JSON.`;
 
     if (action_type === 'ncert') {
         return `You are an NCERT textbook expert. For "${topic}" in ${subject_display} ${class_display}:
-1. Specify which NCERT book and chapter covers this topic
-2. Mention specific page ranges if possible
+1. Specify which NCERT book and exact chapter covers this topic
+2. Mention specific page ranges if possible (based on standard NCERT editions)
 3. Highlight which sections are most important for NEET
-4. Note any diagrams or tables that are frequently tested
+4. Note any diagrams, tables, or figures that are frequently tested
 5. Point out any additional topics in the same chapter that are related
+6. Mention if this topic also appears in other chapters
 
-Be specific with book names.`;
+Be specific with book names (e.g., "Biology Class 12, Chapter 5: Principles of Inheritance and Variation").`;
     }
 
-    return `You are a NEET exam tutor. Help the student with ${topic}.`;
+    if (action_type === 'visual') {
+        return `You are an expert at explaining ${subject_display} concepts visually. For "${topic}" in ${class_display}:
+
+Create a clear visual representation using ONE of these formats (choose the most appropriate):
+
+1. **ASCII Diagram** - For structures, cycles, or processes
+2. **Flowchart** - For sequential processes (use arrows →, ↓)
+3. **Comparison Table** - For comparing concepts
+4. **Mind Map** - For related concepts (use indentation and symbols)
+
+Guidelines:
+- Use clear labels
+- Show relationships with arrows
+- Include key terms
+- Add brief explanations below the visual
+- Make it easy to memorize
+
+After the visual, add:
+- 3 key points to remember
+- One memory trick or mnemonic if applicable`;
+    }
+
+    // Default for custom queries
+    return `You are a NEET exam tutor specializing in ${subject_display} for ${class_display}. 
+Help the student understand the topic: ${topic}
+
+Guidelines:
+- Be accurate and comprehensive
+- Use simple language
+- Include relevant examples
+- Relate to NEET exam requirements
+- Use bullet points and headings for clarity
+- If the question mentions Telugu, respond in Telugu (తెలుగు)
+- If they ask for mnemonics, be creative but accurate`;
 }
