@@ -1,11 +1,15 @@
+import { searchNcertContent, formatContext, buildRagPrompt } from './rag.js';
+
 export async function onRequestPost({ request, env }) {
     try {
         const req = await request.json();
-        const { topic, subject, class_level, action_type } = req;
+        const { topic, subject, class_level, action_type, subtopic } = req;
 
         // Get keys from environment variables
         const claude_key = env.CLAUDE_API_KEY;
         const gemini_key = env.GEMINI_API_KEY;
+        const supabase_url = env.SUPABASE_URL;
+        const supabase_key = env.SUPABASE_ANON_KEY;
 
         if (!claude_key && !gemini_key) {
             return new Response(JSON.stringify({
@@ -17,8 +21,44 @@ export async function onRequestPost({ request, env }) {
             });
         }
 
-        const system_prompt = getSystemPrompt(action_type, subject, class_level, topic);
-        const user_prompt = `Topic: ${topic}`;
+        // RAG: Retrieve relevant NCERT context if Supabase is configured
+        let ragContext = null;
+        let sources = [];
+
+        if (supabase_url && supabase_key && gemini_key) {
+            try {
+                const searchQuery = subtopic ? `${topic} ${subtopic}` : topic;
+                const results = await searchNcertContent(
+                    searchQuery,
+                    subject,
+                    class_level,
+                    supabase_url,
+                    supabase_key,
+                    gemini_key
+                );
+
+                if (results && results.length > 0) {
+                    ragContext = formatContext(results);
+                    sources = results.map(r => ({
+                        chapter: r.chapter_name,
+                        subject: r.subject,
+                        classLevel: r.class_level
+                    }));
+                }
+            } catch (ragError) {
+                console.error('RAG search error:', ragError);
+                // Continue without RAG if it fails
+            }
+        }
+
+        let system_prompt = getSystemPrompt(action_type, subject, class_level, topic);
+
+        // Inject RAG context if available
+        if (ragContext && action_type !== 'mcq') {
+            system_prompt = buildRagPrompt(system_prompt, ragContext, sources);
+        }
+
+        const user_prompt = `Topic: ${topic}${subtopic ? ` - Subtopic: ${subtopic}` : ''}`;
 
         // Try Claude first
         if (claude_key) {
@@ -35,7 +75,13 @@ export async function onRequestPost({ request, env }) {
                     } catch (e) { /* ignore parse error */ }
                 }
 
-                return new Response(JSON.stringify({ success: true, content, provider: "claude", mcqs }), {
+                return new Response(JSON.stringify({
+                    success: true,
+                    content,
+                    provider: "claude",
+                    mcqs,
+                    sources: sources.length > 0 ? sources : undefined
+                }), {
                     headers: { "Content-Type": "application/json" }
                 });
             } catch (e) {
@@ -58,7 +104,13 @@ export async function onRequestPost({ request, env }) {
                     } catch (e) { /* ignore parse error */ }
                 }
 
-                return new Response(JSON.stringify({ success: true, content, provider: "gemini", mcqs }), {
+                return new Response(JSON.stringify({
+                    success: true,
+                    content,
+                    provider: "gemini",
+                    mcqs,
+                    sources: sources.length > 0 ? sources : undefined
+                }), {
                     headers: { "Content-Type": "application/json" }
                 });
             } catch (e) {

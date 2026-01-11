@@ -1,0 +1,14 @@
+{
+  "name": "neet-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for NEET Study Assistant - Provides NCERT content, MCQs, and formulas",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.22.0"
+  }
+}
