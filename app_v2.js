@@ -134,12 +134,18 @@ function switchView(view) {
         btn.classList.toggle('active', btn.dataset.view === view);
     });
 
+    // Also update bottom nav on mobile
+    document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === view);
+    });
+
     // Hide all views
     document.getElementById('welcome-screen').style.display = 'none';
     document.getElementById('chapter-content').style.display = 'none';
     document.getElementById('saved-view').style.display = 'none';
     document.getElementById('formulas-view').style.display = 'none';
     document.getElementById('progress-view').style.display = 'none';
+    document.getElementById('practice-view').style.display = 'none';
 
     if (view === 'study') {
         if (currentChapter) {
@@ -156,6 +162,8 @@ function switchView(view) {
     } else if (view === 'progress') {
         document.getElementById('progress-view').style.display = 'block';
         updateProgressView();
+    } else if (view === 'practice') {
+        document.getElementById('practice-view').style.display = 'block';
     }
 }
 
@@ -1247,3 +1255,295 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
+// ============================================
+// PRACTICE VIEW - Statement-Based Questions
+// ============================================
+
+let practiceQuestions = [];
+let currentPracticeIndex = 0;
+let practiceScore = 0;
+let practiceAnswered = [];
+let currentQuestionType = 'statement';
+
+// Update chapters dropdown when subject changes
+function updatePracticeChapters() {
+    const subject = document.getElementById('practice-subject').value;
+    const classLevel = document.getElementById('practice-class').value;
+    const chapterSelect = document.getElementById('practice-chapter');
+    const subtopicSelect = document.getElementById('practice-subtopic');
+
+    // Reset dropdowns
+    chapterSelect.innerHTML = '<option value="">Select Chapter</option>';
+    subtopicSelect.innerHTML = '<option value="">All Subtopics</option>';
+
+    if (!subject) return;
+
+    const chapters = NCERT_DATA[subject]?.[classLevel] || [];
+    chapters.forEach(ch => {
+        const option = document.createElement('option');
+        option.value = ch.number;
+        option.textContent = `${ch.number}. ${ch.name}`;
+        chapterSelect.appendChild(option);
+    });
+}
+
+// Update subtopics dropdown when chapter changes
+function updatePracticeSubtopics() {
+    const subject = document.getElementById('practice-subject').value;
+    const classLevel = document.getElementById('practice-class').value;
+    const chapterNumber = parseInt(document.getElementById('practice-chapter').value);
+    const subtopicSelect = document.getElementById('practice-subtopic');
+
+    subtopicSelect.innerHTML = '<option value="">All Subtopics</option>';
+
+    if (!subject || !chapterNumber) return;
+
+    const chapters = NCERT_DATA[subject]?.[classLevel] || [];
+    const chapter = chapters.find(ch => ch.number === chapterNumber);
+
+    if (chapter?.subtopics) {
+        chapter.subtopics.forEach(sub => {
+            const option = document.createElement('option');
+            option.value = sub.name;
+            option.textContent = sub.name;
+            subtopicSelect.appendChild(option);
+        });
+    }
+}
+
+// Set question type (statement or assertion-reason)
+function setQuestionType(type) {
+    currentQuestionType = type;
+    document.querySelectorAll('.type-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.type === type);
+    });
+}
+
+// Generate statement questions via API
+async function generateStatementQuestions() {
+    const subject = document.getElementById('practice-subject').value;
+    const classLevel = document.getElementById('practice-class').value;
+    const chapterNumber = document.getElementById('practice-chapter').value;
+    const subtopic = document.getElementById('practice-subtopic').value;
+
+    if (!subject || !chapterNumber) {
+        showToast('Please select a subject and chapter', 'error');
+        return;
+    }
+
+    const chapters = NCERT_DATA[subject]?.[classLevel] || [];
+    const chapter = chapters.find(ch => ch.number === parseInt(chapterNumber));
+
+    if (!chapter) {
+        showToast('Chapter not found', 'error');
+        return;
+    }
+
+    const container = document.getElementById('practice-questions');
+    container.innerHTML = `
+        <div class="practice-loading">
+            <div class="spinner"></div>
+            <p>Generating ${currentQuestionType === 'assertion' ? 'Assertion-Reason' : 'Statement-based'} questions...</p>
+        </div>
+    `;
+
+    try {
+        const topic = subtopic ? `${chapter.name} - ${subtopic}` : chapter.name;
+
+        const response = await fetch(`${API_BASE_URL}/api/explain`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                topic: topic,
+                subject: subject,
+                class_level: classLevel,
+                action_type: 'statement-questions',
+                question_type: currentQuestionType,
+                subtopic: subtopic || null
+            })
+        });
+
+        if (!response.ok) throw new Error('API request failed');
+
+        const data = await response.json();
+
+        if (data.success && data.questions) {
+            practiceQuestions = data.questions;
+            currentPracticeIndex = 0;
+            practiceScore = 0;
+            practiceAnswered = new Array(data.questions.length).fill(null);
+            renderPracticeQuestion();
+        } else {
+            // Generate sample questions if API fails
+            generateSampleQuestions(chapter, subtopic);
+        }
+    } catch (error) {
+        console.error('Error generating questions:', error);
+        // Fallback to sample questions
+        generateSampleQuestions(chapter, subtopic);
+    }
+}
+
+// Generate sample questions as fallback
+function generateSampleQuestions(chapter, subtopic) {
+    const topic = subtopic || chapter.name;
+
+    practiceQuestions = [
+        {
+            type: currentQuestionType,
+            text: currentQuestionType === 'assertion'
+                ? `Given below are two statements:`
+                : `Consider the following statements about ${topic}:`,
+            statements: currentQuestionType === 'assertion'
+                ? [
+                    { label: 'Assertion (A)', text: `${topic} is an important concept in ${currentSubject || 'this subject'}.` },
+                    { label: 'Reason (R)', text: `Understanding ${topic} helps in solving NEET questions effectively.` }
+                ]
+                : [
+                    { label: 'I', text: `${topic} is covered in NCERT Class ${document.getElementById('practice-class').value} textbook.` },
+                    { label: 'II', text: `This topic has high weightage in NEET examination.` }
+                ],
+            options: currentQuestionType === 'assertion'
+                ? [
+                    'Both (A) and (R) are true and (R) is the correct explanation of (A)',
+                    'Both (A) and (R) are true but (R) is not the correct explanation of (A)',
+                    '(A) is true but (R) is false',
+                    '(A) is false but (R) is true'
+                ]
+                : [
+                    'Both I and II are true and II explains I',
+                    'Both I and II are true but II does not explain I',
+                    'I is true but II is false',
+                    'Both I and II are false'
+                ],
+            correct: 1,
+            explanation: `This is a practice question about ${topic}. Both statements are generally true. Please generate actual questions using the API with your GEMINI or CLAUDE API keys configured.`,
+            ncertRef: `${chapter.book} - Chapter ${chapter.number}: ${chapter.name}`
+        }
+    ];
+
+    currentPracticeIndex = 0;
+    practiceScore = 0;
+    practiceAnswered = [null];
+    renderPracticeQuestion();
+}
+
+// Render current practice question
+function renderPracticeQuestion() {
+    const container = document.getElementById('practice-questions');
+    const question = practiceQuestions[currentPracticeIndex];
+
+    if (!question) {
+        container.innerHTML = '<div class="practice-placeholder"><span>⚠️</span><p>No questions available</p></div>';
+        return;
+    }
+
+    const answered = practiceAnswered[currentPracticeIndex] !== null;
+    const selectedOption = practiceAnswered[currentPracticeIndex];
+    const isCorrect = selectedOption === question.correct;
+
+    container.innerHTML = `
+        <div class="statement-question">
+            <div class="question-header">
+                <span class="question-number">Question ${currentPracticeIndex + 1} of ${practiceQuestions.length}</span>
+                <div class="question-nav">
+                    <button class="nav-btn" onclick="prevPracticeQuestion()" ${currentPracticeIndex === 0 ? 'disabled' : ''}>← Prev</button>
+                    <span>${currentPracticeIndex + 1}/${practiceQuestions.length}</span>
+                    <button class="nav-btn" onclick="nextPracticeQuestion()" ${currentPracticeIndex >= practiceQuestions.length - 1 ? 'disabled' : ''}>Next →</button>
+                </div>
+            </div>
+            
+            <p class="question-text">${question.text}</p>
+            
+            <div class="statements">
+                ${question.statements.map(s => `
+                    <div class="statement-item">
+                        <span class="statement-label">${s.label}.</span>
+                        ${s.text}
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="options">
+                ${question.options.map((opt, i) => {
+        let classes = 'option';
+        if (answered) {
+            if (i === question.correct) classes += ' correct';
+            else if (i === selectedOption && i !== question.correct) classes += ' incorrect';
+        } else if (selectedOption === i) {
+            classes += ' selected';
+        }
+        return `
+                        <div class="${classes}" onclick="selectPracticeOption(${i})" ${answered ? 'style="pointer-events: none;"' : ''}>
+                            <span class="option-marker">${i + 1}</span>
+                            <span>${opt}</span>
+                        </div>
+                    `;
+    }).join('')}
+            </div>
+            
+            ${answered ? `
+                <div class="answer-feedback ${isCorrect ? 'correct' : 'incorrect'}">
+                    <h4>${isCorrect ? '✅ Correct!' : '❌ Incorrect'}</h4>
+                    <p>${question.explanation}</p>
+                </div>
+            ` : ''}
+        </div>
+        
+        <div class="practice-score">
+            <div class="score-item">
+                <span class="score-value">${practiceAnswered.filter(a => a !== null).length}</span>
+                <span class="score-label">Attempted</span>
+            </div>
+            <div class="score-item">
+                <span class="score-value" style="color: var(--accent-success)">${practiceScore}</span>
+                <span class="score-label">Correct</span>
+            </div>
+            <div class="score-item">
+                <span class="score-value">${Math.round((practiceScore / Math.max(1, practiceAnswered.filter(a => a !== null).length)) * 100)}%</span>
+                <span class="score-label">Accuracy</span>
+            </div>
+        </div>
+    `;
+
+    // Show NCERT context if answered
+    const contextPanel = document.getElementById('practice-context');
+    if (answered && question.ncertRef) {
+        contextPanel.style.display = 'block';
+        document.getElementById('context-content').innerHTML = `
+            <p>${question.explanation}</p>
+            <p class="context-source">📖 Source: ${question.ncertRef}</p>
+        `;
+    } else {
+        contextPanel.style.display = 'none';
+    }
+}
+
+// Select practice option
+function selectPracticeOption(index) {
+    if (practiceAnswered[currentPracticeIndex] !== null) return;
+
+    practiceAnswered[currentPracticeIndex] = index;
+
+    if (index === practiceQuestions[currentPracticeIndex].correct) {
+        practiceScore++;
+    }
+
+    renderPracticeQuestion();
+}
+
+// Navigate practice questions
+function nextPracticeQuestion() {
+    if (currentPracticeIndex < practiceQuestions.length - 1) {
+        currentPracticeIndex++;
+        renderPracticeQuestion();
+    }
+}
+
+function prevPracticeQuestion() {
+    if (currentPracticeIndex > 0) {
+        currentPracticeIndex--;
+        renderPracticeQuestion();
+    }
+}

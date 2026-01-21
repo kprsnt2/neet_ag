@@ -48,6 +48,9 @@
         <button class="nav-btn active" data-view="study" onclick="switchView('study')">
           🏠 Study
         </button>
+        <button class="nav-btn" data-view="practice" onclick="switchView('practice')">
+          📖 Practice
+        </button>
         <button class="nav-btn" data-view="formulas" onclick="switchView('formulas')">
           📐 Formulas
         </button>
@@ -78,6 +81,10 @@
       <button class="bottom-nav-btn active" data-view="study" onclick="switchView('study')">
         <span class="bottom-nav-icon">🏠</span>
         <span class="bottom-nav-label">Study</span>
+      </button>
+      <button class="bottom-nav-btn" data-view="practice" onclick="switchView('practice')">
+        <span class="bottom-nav-icon">📖</span>
+        <span class="bottom-nav-label">Practice</span>
       </button>
       <button class="bottom-nav-btn" data-view="formulas" onclick="switchView('formulas')">
         <span class="bottom-nav-icon">📐</span>
@@ -312,6 +319,72 @@
           <div class="formula-list" id="formula-list"></div>
         </div>
 
+        <!-- Practice View -->
+        <div class="practice-content" id="practice-view" style="display: none;">
+          <div class="practice-header">
+            <h2>📖 Statement-Based Practice</h2>
+            <p>Master NEET-style statement and assertion-reason questions</p>
+          </div>
+
+          <div class="practice-selectors">
+            <div class="selector-group">
+              <label for="practice-subject">Subject</label>
+              <select id="practice-subject" onchange="updatePracticeChapters()">
+                <option value="">Select Subject</option>
+                <option value="biology">🧬 Biology</option>
+                <option value="chemistry">⚗️ Chemistry</option>
+                <option value="physics">⚛️ Physics</option>
+              </select>
+            </div>
+            <div class="selector-group">
+              <label for="practice-class">Class</label>
+              <select id="practice-class" onchange="updatePracticeChapters()">
+                <option value="11">Class 11</option>
+                <option value="12" selected>Class 12</option>
+              </select>
+            </div>
+            <div class="selector-group">
+              <label for="practice-chapter">Chapter</label>
+              <select id="practice-chapter" onchange="updatePracticeSubtopics()">
+                <option value="">Select Chapter</option>
+              </select>
+            </div>
+            <div class="selector-group">
+              <label for="practice-subtopic">Subtopic</label>
+              <select id="practice-subtopic">
+                <option value="">All Subtopics</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="practice-actions">
+            <button class="generate-btn" onclick="generateStatementQuestions()">
+              🎯 Generate Questions
+            </button>
+            <div class="question-type-toggle">
+              <button class="type-btn active" data-type="statement" onclick="setQuestionType('statement')">
+                📋 Statements
+              </button>
+              <button class="type-btn" data-type="assertion" onclick="setQuestionType('assertion')">
+                ⚖️ Assertion-Reason
+              </button>
+            </div>
+          </div>
+
+          <div class="practice-questions" id="practice-questions">
+            <div class="practice-placeholder">
+              <span>📖</span>
+              <p>Select a subject and topic, then click "Generate Questions"</p>
+              <p class="small">Practice with NEET-style statement-based questions</p>
+            </div>
+          </div>
+
+          <div class="practice-context" id="practice-context" style="display: none;">
+            <h4>📚 NCERT Reference</h4>
+            <div class="context-content" id="context-content"></div>
+          </div>
+        </div>
+
         <!-- Progress View -->
         <div class="progress-content" id="progress-view" style="display: none;">
           <h2>📊 Your Progress Dashboard</h2>
@@ -399,7 +472,7 @@
 
   <script src="data.js"></script>
   <script src="formulas.js"></script>
-  <script src="app.js"></script>
+  <script src="app_v2.js"></script>
 </body>
 
 </html>

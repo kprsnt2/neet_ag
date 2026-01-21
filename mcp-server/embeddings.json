@@ -1,0 +1,200 @@
+{
+    "model": "text-embedding-004",
+    "dimension": 768,
+    "generated_at": "2026-01-22T00:00:00.000Z",
+    "note": "This is sample data with mock embeddings. Run 'npm run generate-embeddings' with GEMINI_API_KEY to generate real embeddings.",
+    "documents": [
+        {
+            "id": "bio-12-3-menstrual-cycle",
+            "subject": "biology",
+            "class_level": "12",
+            "chapter_number": 3,
+            "chapter_name": "Human Reproduction",
+            "subtopic": "Menstrual Cycle",
+            "content": "The menstrual cycle is a monthly series of changes in the female reproductive system. It typically lasts 28 days (can range from 21-35 days) and consists of four phases:\n\n1. **Menstrual Phase (Days 1-5)**: The uterine lining (endometrium) sheds, causing menstrual bleeding. Hormone levels (estrogen and progesterone) are low.\n\n2. **Follicular Phase (Days 1-13)**: FSH from the pituitary stimulates ovarian follicles. The dominant follicle produces estrogen, which rebuilds the endometrium.\n\n3. **Ovulation (Day 14)**: LH surge causes the mature follicle to release the ovum. This is the most fertile period.\n\n4. **Luteal Phase (Days 15-28)**: The corpus luteum forms and produces progesterone, maintaining the endometrium for potential implantation.\n\nKey hormones: FSH, LH (from pituitary), Estrogen, Progesterone (from ovaries).\nNEET Important: Know the hormone levels during each phase and their sources.",
+            "embedding": [
+                0.01,
+                0.02,
+                0.03,
+                0.04,
+                0.05
+            ]
+        },
+        {
+            "id": "bio-12-5-mendels-laws",
+            "subject": "biology",
+            "class_level": "12",
+            "chapter_number": 5,
+            "chapter_name": "Principles of Inheritance and Variation",
+            "subtopic": "Mendel's Laws",
+            "content": "Gregor Mendel's experiments with pea plants established the fundamental laws of inheritance:\n\n1. **Law of Dominance**: When two contrasting alleles are present, only one (dominant) expresses in the phenotype. Example: Tall (T) is dominant over dwarf (t).\n\n2. **Law of Segregation**: Allele pairs separate during gamete formation, and each gamete receives one allele. This explains the 3:1 ratio in F2 generation.\n\n3. **Law of Independent Assortment**: Genes for different traits assort independently during gamete formation (applies when genes are on different chromosomes).\n\nMonohybrid Cross: Tt x Tt → TT:Tt:tt = 1:2:1 (genotypic), 3:1 (phenotypic)\nDihybrid Cross: 9:3:3:1 ratio in F2\n\nNEET Important: Practice Punnett squares and understand incomplete dominance (1:2:1 phenotypic ratio) and codominance (both alleles express).",
+            "embedding": [
+                0.02,
+                0.03,
+                0.04,
+                0.05,
+                0.06
+            ]
+        },
+        {
+            "id": "bio-12-10-biogas",
+            "subject": "biology",
+            "class_level": "12",
+            "chapter_number": 10,
+            "chapter_name": "Microbes in Human Welfare",
+            "subtopic": "Biogas Production",
+            "content": "Biogas is produced by anaerobic digestion of organic matter by methanogenic bacteria.\n\n**Process:**\n1. Organic waste (animal dung, plant waste) collected in digester\n2. Slurry formed in mixing tank\n3. Anaerobic digestion occurs in digester:\n   - Hydrolysis: Complex organics → Simple molecules\n   - Acidogenesis: → Organic acids\n   - Methanogenesis: → Methane (CH4) + CO2\n\n**Microorganisms involved:**\n- Methanobacterium (main methane producer)\n- Other anaerobic bacteria\n\n**Biogas composition:** 50-70% CH4, 30-40% CO2, traces of H2S, H2\n\n**Advantages:**\n- Clean fuel (no smoke)\n- Slurry used as fertilizer\n- Reduces waste pollution\n\nNEET Important: Know the bacteria (Methanobacterium) and the anaerobic conditions required.",
+            "embedding": [
+                0.03,
+                0.04,
+                0.05,
+                0.06,
+                0.07
+            ]
+        },
+        {
+            "id": "chem-12-2-nernst",
+            "subject": "chemistry",
+            "class_level": "12",
+            "chapter_number": 2,
+            "chapter_name": "Electrochemistry",
+            "subtopic": "Nernst Equation",
+            "content": "The Nernst equation relates the electrode potential to the standard electrode potential and concentrations:\n\n**Nernst Equation:**\nE = E° - (RT/nF) × ln Q\nor at 298K:\nE = E° - (0.0591/n) × log Q\n\nWhere:\n- E = Electrode potential\n- E° = Standard electrode potential\n- R = Gas constant (8.314 J/mol·K)\n- T = Temperature (K)\n- n = Number of electrons transferred\n- F = Faraday constant (96500 C/mol)\n- Q = Reaction quotient\n\n**For a cell:**\nE_cell = E°_cell - (0.0591/n) × log Q\n\n**At equilibrium:** E_cell = 0, so E°_cell = (0.0591/n) × log K\n\n**Applications:**\n1. Calculate cell potential at non-standard conditions\n2. Determine equilibrium constant from E°\n3. Concentration cells\n\nNEET Important: Practice numerical problems using the 0.0591/n form at 298K.",
+            "embedding": [
+                0.04,
+                0.05,
+                0.06,
+                0.07,
+                0.08
+            ]
+        },
+        {
+            "id": "chem-12-3-kinetics",
+            "subject": "chemistry",
+            "class_level": "12",
+            "chapter_number": 3,
+            "chapter_name": "Chemical Kinetics",
+            "subtopic": "Rate Laws and Order",
+            "content": "Chemical kinetics studies the rate and mechanism of chemical reactions.\n\n**Rate of Reaction:**\nRate = -d[R]/dt = d[P]/dt\n\n**Rate Law:**\nRate = k[A]^m[B]^n\n- k = rate constant\n- m, n = orders with respect to A and B\n- Overall order = m + n\n\n**Order vs Molecularity:**\n- Order: Experimental (can be 0, fractional, negative)\n- Molecularity: Theoretical (always positive integer)\n\n**Integrated Rate Equations:**\n- Zero order: [A] = [A]₀ - kt, t½ = [A]₀/2k\n- First order: ln[A] = ln[A]₀ - kt, t½ = 0.693/k\n- Second order: 1/[A] = 1/[A]₀ + kt, t½ = 1/k[A]₀\n\n**Arrhenius Equation:**\nk = Ae^(-Ea/RT)\nln k = ln A - Ea/RT\n\nNEET Important: First order half-life is independent of concentration. Know Arrhenius equation for temperature dependence.",
+            "embedding": [
+                0.05,
+                0.06,
+                0.07,
+                0.08,
+                0.09
+            ]
+        },
+        {
+            "id": "phys-12-11-photoelectric",
+            "subject": "physics",
+            "class_level": "12",
+            "chapter_number": 11,
+            "chapter_name": "Dual Nature of Radiation and Matter",
+            "subtopic": "Photoelectric Effect",
+            "content": "The photoelectric effect demonstrates the particle nature of light.\n\n**Key Observations:**\n1. Electrons emitted only if frequency ≥ threshold frequency (ν₀)\n2. KE of photoelectrons depends on frequency, not intensity\n3. Number of electrons depends on intensity\n4. Emission is instantaneous (no time lag)\n\n**Einstein's Photoelectric Equation:**\nhν = hν₀ + ½mv²_max\nor\nhν = W + KE_max\n\nWhere:\n- h = Planck's constant (6.63 × 10⁻³⁴ J·s)\n- ν = Frequency of incident light\n- ν₀ = Threshold frequency\n- W = Work function = hν₀\n- KE_max = Maximum kinetic energy\n\n**Stopping Potential (V₀):**\neV₀ = KE_max = h(ν - ν₀)\n\n**Graphs to remember:**\n1. KE_max vs ν: Straight line, slope = h\n2. Stopping potential vs ν: Straight line\n3. Photocurrent vs intensity: Linear (above threshold)\n\nNEET Important: Work function values, threshold frequency calculations, and stopping potential.",
+            "embedding": [
+                0.06,
+                0.07,
+                0.08,
+                0.09,
+                0.10
+            ]
+        },
+        {
+            "id": "bio-11-10-mitosis",
+            "subject": "biology",
+            "class_level": "11",
+            "chapter_number": 10,
+            "chapter_name": "Cell Cycle and Cell Division",
+            "subtopic": "Mitosis",
+            "content": "Mitosis is equational division that produces two identical daughter cells.\n\n**Phases of Mitosis:**\n\n1. **Prophase:**\n   - Chromatin condenses into chromosomes\n   - Nuclear membrane starts to break\n   - Centrioles move to poles, form spindle fibers\n\n2. **Metaphase:**\n   - Chromosomes align at equatorial plate (metaphase plate)\n   - Each chromosome attached to spindle by kinetochore\n   - Best stage to count chromosomes\n\n3. **Anaphase:**\n   - Centromere splits\n   - Sister chromatids separate, move to poles\n   - Shortest phase\n\n4. **Telophase:**\n   - Chromosomes decondense\n   - Nuclear membrane reforms\n   - Nucleoli reappear\n\n**Cytokinesis:**\n- Plant cells: Cell plate formation (centrifugal)\n- Animal cells: Cleavage furrow (centripetal)\n\n**Significance:**\n- Growth and repair\n- Maintains chromosome number\n- Genetic consistency\n\nNEET Important: Know the sequence of events and identify stages from diagrams.",
+            "embedding": [
+                0.07,
+                0.08,
+                0.09,
+                0.10,
+                0.11
+            ]
+        },
+        {
+            "id": "bio-11-11-photosynthesis",
+            "subject": "biology",
+            "class_level": "11",
+            "chapter_number": 11,
+            "chapter_name": "Photosynthesis in Higher Plants",
+            "subtopic": "Light Reactions and Calvin Cycle",
+            "content": "Photosynthesis converts light energy to chemical energy in plants.\n\n**Overall Equation:**\n6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂\n\n**Light Reactions (Thylakoid):**\n1. Photolysis of water: 2H₂O → 4H⁺ + 4e⁻ + O₂\n2. Cyclic photophosphorylation: Only ATP produced\n3. Non-cyclic: ATP + NADPH produced\n\n**Photosystems:**\n- PS I: P700, reduces NADP⁺\n- PS II: P680, splits water\n\n**Calvin Cycle (Stroma):**\n1. Carbon fixation: CO₂ + RuBP → 2 PGA (by RuBisCO)\n2. Reduction: PGA → G3P (uses ATP, NADPH)\n3. Regeneration: G3P → RuBP\n\n**C3 vs C4 Plants:**\n- C3: Calvin cycle only, photorespiration occurs\n- C4: Kranz anatomy, PEP carboxylase, no photorespiration\n\n**CAM Plants:**\n- Open stomata at night (CO₂ fixation)\n- Calvin cycle during day\n\nNEET Important: Compare C3 and C4 pathways, know enzymes (RuBisCO, PEP carboxylase).",
+            "embedding": [
+                0.08,
+                0.09,
+                0.10,
+                0.11,
+                0.12
+            ]
+        },
+        {
+            "id": "phys-11-4-laws-motion",
+            "subject": "physics",
+            "class_level": "11",
+            "chapter_number": 4,
+            "chapter_name": "Laws of Motion",
+            "subtopic": "Newton's Laws",
+            "content": "Newton's Laws of Motion form the foundation of classical mechanics.\n\n**First Law (Inertia):**\nA body remains at rest or in uniform motion unless acted upon by an external force.\nF = 0 → a = 0\n\n**Second Law (F = ma):**\nThe rate of change of momentum is proportional to the applied force.\nF = dp/dt = ma (for constant mass)\n\n**Third Law (Action-Reaction):**\nFor every action, there is an equal and opposite reaction.\nF₁₂ = -F₂₁\n\n**Important Concepts:**\n\n**Momentum:** p = mv\n**Impulse:** J = FΔt = Δp\n\n**Free Body Diagrams:**\n- Identify all forces on the object\n- Weight (mg) always downward\n- Normal force perpendicular to surface\n- Friction opposite to motion/tendency\n\n**Friction:**\n- Static: f_s ≤ μ_s N (maximum = μ_s N)\n- Kinetic: f_k = μ_k N (always less than static)\n\n**Applications:**\n- Pulley systems\n- Inclined planes\n- Circular motion\n\nNEET Important: Draw FBDs correctly, apply F = ma along each axis.",
+            "embedding": [
+                0.09,
+                0.10,
+                0.11,
+                0.12,
+                0.13
+            ]
+        },
+        {
+            "id": "phys-11-7-gravitation",
+            "subject": "physics",
+            "class_level": "11",
+            "chapter_number": 7,
+            "chapter_name": "Gravitation",
+            "subtopic": "Universal Gravitation and Kepler's Laws",
+            "content": "Gravitation describes the attractive force between masses.\n\n**Newton's Law of Gravitation:**\nF = Gm₁m₂/r²\n- G = 6.67 × 10⁻¹¹ Nm²/kg²\n\n**Gravitational Field:**\ng = GM/r² (at distance r from center)\ng' = g(1 - 2h/R) (at height h << R)\ng' = g(1 - d/R) (at depth d)\n\n**Gravitational Potential:**\nV = -GM/r\nU = -GMm/r (potential energy)\n\n**Escape Velocity:**\nv_e = √(2GM/R) = √(2gR) = 11.2 km/s for Earth\n\n**Orbital Velocity:**\nv_o = √(GM/r) = v_e/√2\n\n**Kepler's Laws:**\n1. **Law of Orbits:** Planets move in ellipses with Sun at one focus\n2. **Law of Areas:** Equal areas swept in equal times (areal velocity constant)\n3. **Law of Periods:** T² ∝ a³ (T² = 4π²a³/GM)\n\n**Satellites:**\n- Time period: T = 2π√(r³/GM)\n- Geostationary: T = 24 hrs, h ≈ 36,000 km\n\nNEET Important: Know escape and orbital velocities, use Kepler's third law.",
+            "embedding": [
+                0.10,
+                0.11,
+                0.12,
+                0.13,
+                0.14
+            ]
+        },
+        {
+            "id": "chem-11-4-chemical-bonding",
+            "subject": "chemistry",
+            "class_level": "11",
+            "chapter_number": 4,
+            "chapter_name": "Chemical Bonding and Molecular Structure",
+            "subtopic": "VSEPR and Hybridization",
+            "content": "Chemical bonding explains how atoms combine to form molecules.\n\n**VSEPR Theory:**\nValence Shell Electron Pair Repulsion - predicts molecular geometry.\n\n**Common Geometries:**\n- 2 electron pairs: Linear (180°)\n- 3 electron pairs: Trigonal planar (120°)\n- 4 electron pairs: Tetrahedral (109.5°)\n- 5 electron pairs: Trigonal bipyramidal\n- 6 electron pairs: Octahedral (90°)\n\nLone pairs occupy more space than bond pairs.\n\n**Hybridization:**\n- sp: Linear (BeCl₂, CO₂)\n- sp²: Trigonal planar (BF₃, C₂H₄)\n- sp³: Tetrahedral (CH₄, NH₃, H₂O)\n- sp³d: Trigonal bipyramidal (PCl₅)\n- sp³d²: Octahedral (SF₆)\n\n**Examples with Lone Pairs:**\n- NH₃: sp³, pyramidal (1 LP)\n- H₂O: sp³, bent (2 LP)\n- PCl₃: sp³d, see-saw (1 LP)\n- ICl₄⁻: sp³d², square planar (2 LP)\n\n**Bond Order = (Bonding e⁻ - Antibonding e⁻)/2**\n\nNEET Important: Predict shapes from formula, know hybridization examples.",
+            "embedding": [
+                0.11,
+                0.12,
+                0.13,
+                0.14,
+                0.15
+            ]
+        },
+        {
+            "id": "chem-11-6-equilibrium",
+            "subject": "chemistry",
+            "class_level": "11",
+            "chapter_number": 6,
+            "chapter_name": "Equilibrium",
+            "subtopic": "Chemical and Ionic Equilibrium",
+            "content": "Equilibrium is the state where forward and reverse reaction rates are equal.\n\n**Law of Chemical Equilibrium:**\nFor aA + bB ⇌ cC + dD\nKc = [C]^c[D]^d / [A]^a[B]^b\n\n**Kp and Kc Relation:**\nKp = Kc(RT)^Δn\nΔn = (c + d) - (a + b)\n\n**Le Chatelier's Principle:**\nSystem shifts to oppose applied stress:\n- Add reactant → Forward reaction\n- Remove product → Forward reaction\n- Increase pressure → Side with fewer moles\n- Increase temperature → Endothermic direction\n\n**Ionic Equilibrium:**\n\n**pH and pOH:**\npH = -log[H⁺], pOH = -log[OH⁻]\npH + pOH = 14 (at 25°C)\n\n**Buffer Solutions:**\n- Acidic buffer: Weak acid + salt\n  pH = pKa + log([salt]/[acid])\n- Basic buffer: Weak base + salt\n  pOH = pKb + log([salt]/[base])\n\n**Solubility Product:**\nFor salt MₓAᵧ: Ksp = [M⁺]^x[A⁻]^y\n\nNEET Important: Apply Le Chatelier's principle, calculate pH, use Henderson equation.",
+            "embedding": [
+                0.12,
+                0.13,
+                0.14,
+                0.15,
+                0.16
+            ]
+        }
+    ]
+}

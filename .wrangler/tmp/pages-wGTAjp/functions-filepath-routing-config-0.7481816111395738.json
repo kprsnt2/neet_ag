@@ -1,0 +1,13 @@
+{
+  "routes": [
+    {
+      "routePath": "/api/explain",
+      "mountPath": "/api",
+      "method": "POST",
+      "module": [
+        "api/explain.js:onRequestPost"
+      ]
+    }
+  ],
+  "baseURL": "/"
+}

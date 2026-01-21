@@ -3,7 +3,7 @@ import { searchNcertContent, formatContext, buildRagPrompt } from './rag.js';
 export async function onRequestPost({ request, env }) {
     try {
         const req = await request.json();
-        const { topic, subject, class_level, action_type, subtopic } = req;
+        const { topic, subject, class_level, action_type, subtopic, question_type } = req;
 
         // Get keys from environment variables
         const claude_key = env.CLAUDE_API_KEY;
@@ -51,7 +51,7 @@ export async function onRequestPost({ request, env }) {
             }
         }
 
-        let system_prompt = getSystemPrompt(action_type, subject, class_level, topic);
+        let system_prompt = getSystemPrompt(action_type, subject, class_level, topic, question_type);
 
         // Inject RAG context if available
         if (ragContext && action_type !== 'mcq') {
@@ -65,13 +65,16 @@ export async function onRequestPost({ request, env }) {
             try {
                 const content = await callClaude(user_prompt, system_prompt, claude_key);
                 let mcqs = null;
+                let questions = null;
 
-                if (action_type === 'mcq') {
+                if (action_type === 'mcq' || action_type === 'statement-questions') {
                     try {
                         let json_str = content.trim();
                         if (json_str.startsWith('```json')) json_str = json_str.slice(7, -3);
                         else if (json_str.startsWith('```')) json_str = json_str.slice(3, -3);
-                        mcqs = JSON.parse(json_str);
+                        const parsed = JSON.parse(json_str);
+                        if (action_type === 'mcq') mcqs = parsed;
+                        else questions = parsed;
                     } catch (e) { /* ignore parse error */ }
                 }
 
@@ -80,6 +83,7 @@ export async function onRequestPost({ request, env }) {
                     content,
                     provider: "claude",
                     mcqs,
+                    questions,
                     sources: sources.length > 0 ? sources : undefined
                 }), {
                     headers: { "Content-Type": "application/json" }
@@ -94,13 +98,16 @@ export async function onRequestPost({ request, env }) {
             try {
                 const content = await callGemini(user_prompt, system_prompt, gemini_key);
                 let mcqs = null;
+                let questions = null;
 
-                if (action_type === 'mcq') {
+                if (action_type === 'mcq' || action_type === 'statement-questions') {
                     try {
                         let json_str = content.trim();
                         if (json_str.startsWith('```json')) json_str = json_str.slice(7, -3);
                         else if (json_str.startsWith('```')) json_str = json_str.slice(3, -3);
-                        mcqs = JSON.parse(json_str);
+                        const parsed = JSON.parse(json_str);
+                        if (action_type === 'mcq') mcqs = parsed;
+                        else questions = parsed;
                     } catch (e) { /* ignore parse error */ }
                 }
 
@@ -109,6 +116,7 @@ export async function onRequestPost({ request, env }) {
                     content,
                     provider: "gemini",
                     mcqs,
+                    questions,
                     sources: sources.length > 0 ? sources : undefined
                 }), {
                     headers: { "Content-Type": "application/json" }
@@ -179,7 +187,7 @@ async function callGemini(prompt, systemPrompt, apiKey) {
     return data.candidates[0].content.parts[0].text;
 }
 
-function getSystemPrompt(action_type, subject, class_level, topic) {
+function getSystemPrompt(action_type, subject, class_level, topic, question_type = 'statement') {
     const subject_display = subject.charAt(0).toUpperCase() + subject.slice(1);
     const class_display = `Class ${class_level}`;
 
@@ -240,6 +248,60 @@ Response MUST be a raw JSON array like this:
   }
 ]
 Do not add any markdown formatting or extra text outside the JSON.`;
+    }
+
+    if (action_type === 'statement-questions') {
+        const questionFormat = question_type === 'assertion'
+            ? 'Assertion-Reason'
+            : 'Statement-based';
+
+        const optionsFormat = question_type === 'assertion'
+            ? `[
+    "Both (A) and (R) are true and (R) is the correct explanation of (A)",
+    "Both (A) and (R) are true but (R) is not the correct explanation of (A)",
+    "(A) is true but (R) is false",
+    "(A) is false but (R) is true"
+  ]`
+            : `[
+    "Both statements are correct",
+    "Only statement I is correct",
+    "Only statement II is correct",
+    "Both statements are incorrect"
+  ]`;
+
+        const statementsFormat = question_type === 'assertion'
+            ? `[{"label": "Assertion (A)", "text": "..."}, {"label": "Reason (R)", "text": "..."}]`
+            : `[{"label": "I", "text": "..."}, {"label": "II", "text": "..."}]`;
+
+        return `You are a NEET exam question creator specializing in ${questionFormat} questions.
+
+Create 5 ${questionFormat} questions for "${topic}" in ${subject_display} ${class_display}.
+
+For each question:
+1. Create statements that test conceptual understanding
+2. Make some statements obviously true/false and others subtle
+3. Include common misconceptions students might have
+4. Base questions on NCERT content
+5. Provide clear explanations
+
+Response MUST be a raw JSON array:
+[
+  {
+    "type": "${question_type}",
+    "text": "${question_type === 'assertion' ? 'Given below are two statements:' : 'Consider the following statements:'}",
+    "statements": ${statementsFormat},
+    "options": ${optionsFormat},
+    "correct": 0,
+    "explanation": "Explanation of why this is correct, referencing NCERT...",
+    "ncertRef": "${subject_display} ${class_display} - Chapter X: Chapter Name"
+  }
+]
+
+Ensure:
+- Statements are factually accurate based on NCERT
+- Mix of easy and challenging questions
+- Clear, educational explanations
+- No markdown, just raw JSON`;
     }
 
     if (action_type === 'ncert') {
