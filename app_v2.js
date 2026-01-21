@@ -1188,6 +1188,7 @@ switchView = function (view) {
     document.getElementById('saved-view').style.display = 'none';
     document.getElementById('formulas-view').style.display = 'none';
     document.getElementById('progress-view').style.display = 'none';
+    document.getElementById('practice-view').style.display = 'none';
 
     if (view === 'study') {
         if (currentChapter) {
@@ -1204,6 +1205,8 @@ switchView = function (view) {
     } else if (view === 'progress') {
         document.getElementById('progress-view').style.display = 'block';
         updateProgressView();
+    } else if (view === 'practice') {
+        document.getElementById('practice-view').style.display = 'block';
     }
 };
 
