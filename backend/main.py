@@ -123,7 +123,7 @@ async def call_claude(prompt: str, system_prompt: str, api_key: str):
         return result['content'][0]['text']
 
 async def call_gemini(prompt: str, system_prompt: str, api_key: str):
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={api_key}"
     headers = {'Content-Type': 'application/json'}
     data = {
         "contents": [{
